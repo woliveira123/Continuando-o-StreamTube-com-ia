@@ -438,6 +438,506 @@
           "auth"
         ]
       }
+    },
+    "/videos": {
+      "post": {
+        "operationId": "VideosController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVideoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VideoResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros ou partes inválidos"
+          },
+          "401": {
+            "description": "JWT ausente ou inválido"
+          },
+          "404": {
+            "description": "Vídeo não encontrado ou pertence a outro usuário"
+          },
+          "409": {
+            "description": "Estado incompatível com a operação"
+          },
+          "503": {
+            "description": "Armazenamento indisponível; operação pode ser repetida"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/videos/{id}": {
+      "get": {
+        "operationId": "VideosController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VideoResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros ou partes inválidos"
+          },
+          "401": {
+            "description": "JWT ausente ou inválido"
+          },
+          "404": {
+            "description": "Vídeo não encontrado ou pertence a outro usuário"
+          },
+          "409": {
+            "description": "Estado incompatível com a operação"
+          },
+          "503": {
+            "description": "Armazenamento indisponível; operação pode ser repetida"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/videos/{id}/upload": {
+      "get": {
+        "operationId": "VideosController_upload",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros ou partes inválidos"
+          },
+          "401": {
+            "description": "JWT ausente ou inválido"
+          },
+          "404": {
+            "description": "Vídeo não encontrado ou pertence a outro usuário"
+          },
+          "409": {
+            "description": "Estado incompatível com a operação"
+          },
+          "503": {
+            "description": "Armazenamento indisponível; operação pode ser repetida"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "tags": [
+          "videos"
+        ]
+      },
+      "delete": {
+        "operationId": "VideosController_cancel",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "Parâmetros ou partes inválidos"
+          },
+          "401": {
+            "description": "JWT ausente ou inválido"
+          },
+          "404": {
+            "description": "Vídeo não encontrado ou pertence a outro usuário"
+          },
+          "409": {
+            "description": "Estado incompatível com a operação"
+          },
+          "503": {
+            "description": "Armazenamento indisponível; operação pode ser repetida"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/videos/{id}/parts/{partNumber}": {
+      "post": {
+        "operationId": "VideosController_part",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "partNumber",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignedPartDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros ou partes inválidos"
+          },
+          "401": {
+            "description": "JWT ausente ou inválido"
+          },
+          "404": {
+            "description": "Vídeo não encontrado ou pertence a outro usuário"
+          },
+          "409": {
+            "description": "Estado incompatível com a operação"
+          },
+          "503": {
+            "description": "Armazenamento indisponível; operação pode ser repetida"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/videos/{id}/complete": {
+      "post": {
+        "operationId": "VideosController_complete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VideoResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros ou partes inválidos"
+          },
+          "401": {
+            "description": "JWT ausente ou inválido"
+          },
+          "404": {
+            "description": "Vídeo não encontrado ou pertence a outro usuário"
+          },
+          "409": {
+            "description": "Estado incompatível com a operação"
+          },
+          "503": {
+            "description": "Armazenamento indisponível; operação pode ser repetida"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/videos/{id}/retry": {
+      "post": {
+        "operationId": "VideosController_retry",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VideoResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros ou partes inválidos"
+          },
+          "401": {
+            "description": "JWT ausente ou inválido"
+          },
+          "404": {
+            "description": "Vídeo não encontrado ou pertence a outro usuário"
+          },
+          "409": {
+            "description": "Estado incompatível com a operação"
+          },
+          "503": {
+            "description": "Armazenamento indisponível; operação pode ser repetida"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/videos/{id}/stream": {
+      "get": {
+        "operationId": "VideosController_stream",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "307": {
+            "description": "Redirect temporário para objeto privado; destino suporta Range/206",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros ou partes inválidos"
+          },
+          "401": {
+            "description": "JWT ausente ou inválido"
+          },
+          "404": {
+            "description": "Vídeo não encontrado ou pertence a outro usuário"
+          },
+          "409": {
+            "description": "Estado incompatível com a operação"
+          },
+          "503": {
+            "description": "Armazenamento indisponível; operação pode ser repetida"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/videos/{id}/download": {
+      "get": {
+        "operationId": "VideosController_download",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "307": {
+            "description": "Redirect temporário para objeto privado; destino suporta Range/206",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros ou partes inválidos"
+          },
+          "401": {
+            "description": "JWT ausente ou inválido"
+          },
+          "404": {
+            "description": "Vídeo não encontrado ou pertence a outro usuário"
+          },
+          "409": {
+            "description": "Estado incompatível com a operação"
+          },
+          "503": {
+            "description": "Armazenamento indisponível; operação pode ser repetida"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/videos/{id}/thumbnail": {
+      "get": {
+        "operationId": "VideosController_thumbnail",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "307": {
+            "description": "Redirect temporário para objeto privado; destino suporta Range/206",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros ou partes inválidos"
+          },
+          "401": {
+            "description": "JWT ausente ou inválido"
+          },
+          "404": {
+            "description": "Vídeo não encontrado ou pertence a outro usuário"
+          },
+          "409": {
+            "description": "Estado incompatível com a operação"
+          },
+          "503": {
+            "description": "Armazenamento indisponível; operação pode ser repetida"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "tags": [
+          "videos"
+        ]
+      }
     }
   },
   "info": {
@@ -480,6 +980,189 @@
       "ResetPasswordDto": {
         "type": "object",
         "properties": {}
+      },
+      "CreateVideoDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "filename": {
+            "type": "string",
+            "maxLength": 255,
+            "example": "video.mp4"
+          },
+          "size": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 10000000000
+          }
+        },
+        "required": [
+          "title",
+          "filename",
+          "size"
+        ]
+      },
+      "VideoMetadataDto": {
+        "type": "object",
+        "properties": {
+          "width": {
+            "type": "number"
+          },
+          "height": {
+            "type": "number"
+          },
+          "codec": {
+            "type": "string"
+          },
+          "format": {
+            "type": "string"
+          },
+          "size": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "width",
+          "height",
+          "codec",
+          "format",
+          "size"
+        ]
+      },
+      "VideoResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "filename": {
+            "type": "string"
+          },
+          "size": {
+            "type": "number"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "processing",
+              "ready",
+              "error"
+            ]
+          },
+          "part_size": {
+            "type": "number"
+          },
+          "part_count": {
+            "type": "number"
+          },
+          "duration": {
+            "type": "number",
+            "nullable": true
+          },
+          "metadata": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VideoMetadataDto"
+              }
+            ]
+          },
+          "error_code": {
+            "type": "string",
+            "nullable": true
+          },
+          "stream_url": {
+            "type": "string"
+          },
+          "download_url": {
+            "type": "string"
+          },
+          "thumbnail_url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "filename",
+          "size",
+          "status",
+          "part_size",
+          "part_count",
+          "stream_url",
+          "download_url",
+          "thumbnail_url"
+        ]
+      },
+      "UploadedPartDto": {
+        "type": "object",
+        "properties": {
+          "part_number": {
+            "type": "number"
+          },
+          "size": {
+            "type": "number"
+          },
+          "etag": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "part_number",
+          "size",
+          "etag"
+        ]
+      },
+      "UploadResponseDto": {
+        "type": "object",
+        "properties": {
+          "part_size": {
+            "type": "number"
+          },
+          "part_count": {
+            "type": "number"
+          },
+          "parts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UploadedPartDto"
+            }
+          }
+        },
+        "required": [
+          "part_size",
+          "part_count",
+          "parts"
+        ]
+      },
+      "SignedPartDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Temporary signed PUT URL. Do not log or share."
+          },
+          "expires_in": {
+            "type": "number"
+          },
+          "size": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "url",
+          "expires_in",
+          "size"
+        ]
       },
       "ApiErrorEnvelope": {
         "type": "object",

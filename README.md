@@ -4,6 +4,12 @@ Projeto da disciplina **Desenvolvimento de Aplicações de IA** do MBA de Engenh
 
 Este é um projeto greenfield desenvolvido para demonstrar como construir uma aplicação do zero utilizando IA de forma adequada no processo de desenvolvimento.
 
+## Entrega Fase 03 — backend
+
+Upload multipart direto de até 10.000.000.000 bytes, retomada, processamento assíncrono BullMQ/Redis, worker FFmpeg, metadados, thumbnail, MP4 com Range e download do original. Todas as rotas validam JWT e dono do canal.
+
+[Guia de execução](docs/phase-03-runbook.md) · [Pesquisa e decisões](docs/decisions/technical-decisions-phase-03-videos.md) · [Plano](docs/phases/phase-03-videos/phase-03-videos.md) · [Evidências](docs/phases/phase-03-videos/progress.md).
+
 ## Professor
 
 <a href="https://github.com/argentinaluiz">
@@ -45,9 +51,9 @@ O projeto é um monorepo baseado em containers Docker. Cada subprojeto sobe sua 
 - **API** (NestJS 11) — regras de negócio, autenticação (JWT + refresh token rotation), envio de e-mails e acesso ao banco.
 - **Database** (PostgreSQL 17) — usuários, canais e tokens de autenticação.
 - **Email Service** (Mailpit) — captura os e-mails transacionais (confirmação de conta e recuperação de senha) em uma UI local.
-- **Video Worker** (FFmpeg) — processamento de vídeos *(planejado — Fase 03)*.
-- **Object Storage** (S3/MinIO) — arquivos de vídeo e thumbnails *(planejado — Fase 03)*.
-- **Message Queue** — fila de processamento de vídeos *(planejado — Fase 03)*.
+- **Video Worker** (FFmpeg) — processamento de vídeos (Fase 03 — backend implementado).
+- **Object Storage** (S3/MinIO) — arquivos de vídeo e thumbnails (Fase 03 — backend implementado).
+- **Message Queue** (BullMQ + Redis) — fila de processamento de vídeos (Fase 03 — backend implementado).
 
 O diagrama de arquitetura completo (C4) está em `docs/diagrams/software-arch.mermaid`.
 
@@ -55,32 +61,25 @@ O diagrama de arquitetura completo (C4) está em `docs/diagrams/software-arch.me
 
 Os dois subprojetos têm stacks Docker **separadas**. Suba primeiro o backend, rode as migrations e depois o frontend.
 
-### 1. Backend (NestJS + PostgreSQL + Mailpit)
+### 1. Backend (Fase 03)
 
-```bash
+```powershell
+node scripts/setup-env.mjs
 cd nestjs-project
-
-# Sobe API, banco e Mailpit
-docker compose up -d
-
-# Instala dependências (apenas na primeira vez)
-docker compose exec nestjs-api npm install
-
-# Cria o schema do banco (obrigatório — synchronize está desabilitado)
-docker compose exec nestjs-api npm run migration:run
-
-# Sobe o servidor de desenvolvimento em watch mode
-docker compose exec -d nestjs-api npm run start:dev
+docker compose up -d --build
 ```
 
-Serviços disponíveis:
+A API executa migrations antes de iniciar. Worker FFmpeg, PostgreSQL, Redis, MinIO e Mailpit iniciam pelo Compose. O primeiro build do MinIO compila o fonte oficial fixado e pode levar vários minutos.
 
-| Serviço | URL / Porta |
-|---------|-------------|
-| API NestJS | http://localhost:3000 |
-| PostgreSQL | `localhost:5432` (db/user/senha: `streamtube`) |
-| Mailpit (UI de e-mails) | http://localhost:8025 |
-| Swagger (opcional) | http://localhost:3000/api/docs — habilite com `SWAGGER_ENABLED=true` |
+| Serviço | Endereço |
+|---|---|
+| API | http://localhost:3000 |
+| Swagger | http://localhost:3000/api/docs (`SWAGGER_ENABLED=true`) |
+| Mailpit | http://localhost:8025 |
+| MinIO S3 / console | http://localhost:9000 / http://localhost:9001 |
+| PostgreSQL / Redis | rede interna Docker (`db:5432`, `redis:6379`) |
+
+O script gera segredos aleatórios em `.env` ignorado pelo Git e preserva arquivo existente. [Guia completo da Fase 03](docs/phase-03-runbook.md): arquitetura, upload retomável, estados, testes e diagnóstico. O frontend da Fase 03 está fora do escopo deste desafio.
 
 ### 2. Frontend (Next.js)
 
@@ -103,14 +102,12 @@ A aplicação ficará disponível em **http://localhost:3001**.
 
 ### Backend (Jest)
 
-```bash
+```powershell
 cd nestjs-project
-docker compose exec nestjs-api npm test               # unitários + integração
-docker compose exec nestjs-api npm run test:e2e       # end-to-end (HTTP via supertest)
-docker compose exec nestjs-api npm run test:cov       # cobertura
+docker compose -f compose.yaml -f compose.test.yaml --profile test run --rm tests
 ```
 
-Sufixos: `*.spec.ts` (unitário), `*.integration-spec.ts` (integração com banco real), `*.e2e-spec.ts` (end-to-end). Testes de integração/e2e rodam com `--runInBand`.
+Runner isolado: banco `streamtube_test`, bucket `streamtube-test` e fila própria. Executa migrations, unitários/integração/e2e em série, TypeScript, lint e build. Não rode testes destrutivos no banco de desenvolvimento.
 
 ### Frontend (Vitest + Playwright)
 
@@ -195,7 +192,7 @@ green-field-ia-project/
 |------|-----------|--------|
 | **01** | Configuração Base do Projeto | ✅ Concluída |
 | **02** | Cadastro, Login e Gerenciamento de Conta | ✅ Concluída |
-| **03** | Upload e Processamento de Vídeos | ⏳ Planejada |
+| **03** | Upload e Processamento de Vídeos | ✅ Backend concluído |
 | **04** | Gerenciamento de Vídeos e Canal | ⏳ Planejada |
 | **05** | Página de Visualização do Vídeo | ⏳ Planejada |
 | **06** | Interações Sociais (Likes, Comentários, Inscrições) | ⏳ Planejada |

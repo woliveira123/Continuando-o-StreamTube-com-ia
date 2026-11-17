@@ -1,3 +1,5 @@
+> Atualizacao Fase 03: consulte `docs/phase-03-runbook.md` na raiz. O Compose agora inicia API e worker automaticamente, sem bind mount e sem processo ocioso. Gere ambiente com `node scripts/setup-env.mjs` na raiz; execute `docker compose up -d --build` no backend. Testes usam `docker compose -f compose.yaml -f compose.test.yaml --profile test run --rm tests`, banco/bucket isolados. Esta orientacao substitui os comandos antigos de startup e testes abaixo. Adaptação Codex em `AGENTS.md` na raiz.
+
 # CLAUDE.md
 
 ## Project Overview

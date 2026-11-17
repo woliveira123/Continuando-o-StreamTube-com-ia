@@ -1,25 +1,54 @@
 services:
   nestjs-api:
-    build: 
+    build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
+    image: streamtube-api:phase03
     ports:
-      - 3000:3000
-    volumes:
-      - .:/home/node/app
+      - "127.0.0.1:3000:3000"
+    env_file: .env
+    command: ["sh", "-c", "npm run migration:run && node dist/main.js"]
     depends_on:
       db:
         condition: service_healthy
       mailpit:
         condition: service_started
+      storage-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  worker:
+    image: streamtube-api:phase03
+    env_file: .env
+    command: ["node", "dist/video-worker/main.js"]
+    restart: unless-stopped
+    stop_grace_period: 60s
+    depends_on:
+      nestjs-api:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  storage-init:
+    image: streamtube-api:phase03
+    env_file: .env
+    command: ["node", "scripts/init-storage.mjs"]
+    depends_on:
+      minio:
+        condition: service_healthy
 
   db:
     image: postgres:17
-    ports:
-      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./docker/init-test-db.sql:/docker-entrypoint-initdb.d/01-test-db.sql:ro
     environment:
       - POSTGRES_USER=streamtube
-      - POSTGRES_PASSWORD=streamtube
+      - POSTGRES_PASSWORD=${DB_PASSWORD:?Execute node ../scripts/setup-env.mjs}
       - POSTGRES_DB=streamtube
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U streamtube"]
@@ -33,4 +62,40 @@ services:
       - "1025:1025"
       - "8025:8025"
 
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "noeviction"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
+  minio:
+    build:
+      context: .
+      dockerfile: docker/minio.Dockerfile
+    image: streamtube-minio:7aac2a2
+    command: server /data --console-address :9001
+    environment:
+      MINIO_API_STALE_UPLOADS_EXPIRY: 24h
+      MINIO_API_STALE_UPLOADS_CLEANUP_INTERVAL: 1h
+      MINIO_ROOT_USER: ${STORAGE_ACCESS_KEY:?Run setup-env.mjs}
+      MINIO_ROOT_PASSWORD: ${STORAGE_SECRET_KEY:?Run setup-env.mjs}
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://minio:9000/minio/health/live"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  db_data:
+  redis_data:
+  minio_data:

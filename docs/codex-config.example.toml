@@ -1,0 +1,5 @@
+# Exemplo opcional de MCP remoto. Nenhuma chave fica no repositório.
+[mcp_servers.context7]
+url = "https://mcp.context7.com/mcp"
+# Se sua conta exigir autenticação, use variável de ambiente local:
+# bearer_token_env_var = "CONTEXT7_API_KEY"
